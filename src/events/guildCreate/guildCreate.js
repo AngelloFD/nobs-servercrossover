@@ -29,7 +29,8 @@ module.exports = async (client, guild) => {
       .setTimestamp();
     if (data.textChannel !== null) {
       const channel = guild.channels.cache.get(data.textChannel);
-      if (!channel) return guild.systemChannel.send({ embeds: [embed] });
+      if (!channel && guild.systemChannel) return guild.systemChannel.send({ embeds: [embed] });
+      return;
     }
   } catch (error) {
     console.error(`Error on guildCreate: ${error}`);
