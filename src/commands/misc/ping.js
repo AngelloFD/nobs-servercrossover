@@ -10,7 +10,6 @@ module.exports = {
   ],
 
   callback: (client, interaction) => {
-    // TODO: Implement reply to textChannel if its set.
     return interaction.reply(`Pong'd at ${client.ws.ping}ms!`, {
       ephemeral: true,
     });

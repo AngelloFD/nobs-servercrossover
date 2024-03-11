@@ -13,7 +13,6 @@ module.exports = {
   ],
 
   callback: async (client, interaction) => {
-    // TODO: Implement reply to textChannel if its set.
     try {
       const guildData = await getGuildData(interaction.guild.id);
       const settings = guildData.guildData;
@@ -40,7 +39,7 @@ module.exports = {
 };
 
 function processSettings(parsedSettings) {
-  parsedSettings.splice(parsedSettings.indexOf('**isActive**: true'), 1);
+  parsedSettings.splice(parsedSettings.indexOf('**isActive**:'), 1);
   parsedSettings.splice(parsedSettings.indexOf('**joinedAt**:'), 1);
   parsedSettings.splice(parsedSettings.indexOf('**lastOnline**:'), 1);
 
@@ -48,7 +47,6 @@ function processSettings(parsedSettings) {
   parsedSettings.forEach((setting, index) => {
     parsedSettings[index] = setting
       .replace('status', 'Status')
-      .replace('token', 'Webhook Token')
-      .replace('textChannel', "Bot's Text Channel");
+      .replace('token', 'Webhook Token');
   });
 }

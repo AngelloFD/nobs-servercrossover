@@ -28,10 +28,13 @@ module.exports = async (client) => {
   } else {
     try {
       const localCommands = getLocalCommands();
-      const applicationCommands = await getApplicationCommands(client, TEST_SERVER1_ID);
+      const applicationCommands = await getApplicationCommands(
+        client,
+        TEST_SERVER1_ID
+      );
 
       // Step 1: Delete commands that are not in localCommands
-      const localCommandNames = new Set(localCommands.map(cmd => cmd.name));
+      const localCommandNames = new Set(localCommands.map((cmd) => cmd.name));
       for (const applicationCommand of applicationCommands.cache.values()) {
         if (!localCommandNames.has(applicationCommand.name)) {
           await applicationCommands.delete(applicationCommand.id);
@@ -43,7 +46,9 @@ module.exports = async (client) => {
       for (const localCommand of localCommands) {
         const { name, description, options } = localCommand;
 
-        const existingCommand = applicationCommands.cache.find(cmd => cmd.name === name);
+        const existingCommand = applicationCommands.cache.find(
+          (cmd) => cmd.name === name
+        );
 
         if (existingCommand) {
           if (localCommand.deleted) {
@@ -62,7 +67,9 @@ module.exports = async (client) => {
           }
         } else {
           if (localCommand.deleted) {
-            console.warn(`⏩ Skipping registering command "${name}" as it's set to delete.`);
+            console.warn(
+              `⏩ Skipping registering command "${name}" as it's set to delete.`
+            );
             continue;
           }
 

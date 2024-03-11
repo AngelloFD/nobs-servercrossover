@@ -8,7 +8,6 @@ const guildSchema = new Schema({
   guildData: {
     status: String,
     token: String,
-    textChannel: String,
     isActive: Boolean,
     joinedAt: Date,
     lastOnline: Date,
@@ -27,7 +26,6 @@ module.exports = {
           guildData: {
             status: 'offline',
             token: null,
-            textChannel: null,
             isActive: true,
             joinedAt: Date.now(),
             lastOnline: null,

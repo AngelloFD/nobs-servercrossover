@@ -25,7 +25,6 @@ module.exports = {
   ],
 
   callback: async (client, interaction, args) => {
-    // TODO: Implement reply to textChannel if its set.
     const channel = interaction.options.getChannel('channel');
     if (!channel)
       return interaction.reply('Please provide a valid channel.', {

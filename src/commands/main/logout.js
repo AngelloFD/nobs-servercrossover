@@ -13,7 +13,6 @@ module.exports = {
   ],
 
   callback: async (client, interaction, args) => {
-    // TODO: Implement reply to textChannel if its set.
     try {
       const data = await getGuildData(interaction.guild.id);
       if (data.guildData.status === 'offline') {
