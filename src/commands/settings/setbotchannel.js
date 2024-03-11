@@ -1,4 +1,4 @@
-// TODO: Ask for a channel to set as bot channel, set to database, success message and set the bot to only send messages to that channel
+// TODO: Delete this file
 const {
   ApplicationCommandOptionType,
   PermissionFlagsBits,
@@ -8,6 +8,7 @@ const { getGuildData } = require('../../database/schemas/Guild');
 module.exports = {
   name: 'config-setbotchannel',
   description: 'Set the bot channel for the server',
+  deteled: true,
   options: [
     {
       name: 'channel',
