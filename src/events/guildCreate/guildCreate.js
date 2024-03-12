@@ -12,7 +12,7 @@ const {
 module.exports = async (client, guild) => {
   if (!guild.available) return;
   try {
-    let data = await registerGuild(guild.id);
+    const data = await registerGuild(guild.id);
     if (guildIsActive(guild.id) === false) {
       data.isActive = true;
       await data.save().catch((error) => {
@@ -30,13 +30,13 @@ module.exports = async (client, guild) => {
     if (guild.systemChannel) {
       return guild.systemChannel.send({ embeds: [embed] });
     } else {
-      let channel = guild.channels.cache.find(
+      const channel = guild.channels.cache.find(
         (channel) => channel.type === 'GUILD_TEXT'
       );
       if (channel && channel.permissionsFor(guild.me).has('SEND_MESSAGES')) {
         channel.send({ embeds: [embed] });
       } else {
-        let owner = await guild.fetchOwner().catch((error) => {
+        const owner = await guild.fetchOwner().catch((error) => {
           console.error(`Error on fetchOwner: ${error}`);
         });
         owner.send({ embeds: [embed] });

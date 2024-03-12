@@ -5,7 +5,11 @@ module.exports = async (client, interaction) => {
     return interaction.reply('This command cannot be ran in DMs.', {
       ephemeral: true,
     });
-  if (!interaction.isCommand() || interaction.channel.name === 'crossover-channel') return;
+  if (
+    !interaction.isCommand() ||
+    interaction.channel.name === 'crossover-channel'
+  )
+    return;
 
   if (interaction.isChatInputCommand()) {
     handleSlashCommand(client, interaction);

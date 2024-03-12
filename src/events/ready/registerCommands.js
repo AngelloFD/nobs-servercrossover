@@ -38,7 +38,7 @@ module.exports = async (client) => {
       for (const applicationCommand of applicationCommands.cache.values()) {
         if (!localCommandNames.has(applicationCommand.name)) {
           await applicationCommands.delete(applicationCommand.id);
-          console.warn(`🗑 Deleted command "${applicationCommand.name}".`);
+          console.warn(`⚠️ Deleted command "${applicationCommand.name}".`);
         }
       }
 
@@ -53,7 +53,7 @@ module.exports = async (client) => {
         if (existingCommand) {
           if (localCommand.deleted) {
             await applicationCommands.delete(existingCommand.id);
-            console.warn(`🗑 Deleted command "${name}".`);
+            console.warn(`⚠️ Deleted command "${name}".`);
             continue;
           }
 

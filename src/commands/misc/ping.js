@@ -10,8 +10,6 @@ module.exports = {
   ],
 
   callback: (client, interaction) => {
-    return interaction.reply(`Pong'd at ${client.ws.ping}ms!`, {
-      ephemeral: true,
-    });
+    return interaction.reply(`Pong'd at ${client.ws.ping}ms!`);
   },
 };

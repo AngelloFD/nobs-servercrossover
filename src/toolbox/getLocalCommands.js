@@ -13,7 +13,7 @@ module.exports = (exceptions = []) => {
     const commandFiles = getAllFiles(commandCategory);
 
     for (const commandFile of commandFiles) {
-      let commandObject = require(commandFile);
+      const commandObject = require(commandFile);
 
       // Convert BigInt values in requiredPermissions and botPermissions to strings
       if (commandObject.requiredPermissions) {

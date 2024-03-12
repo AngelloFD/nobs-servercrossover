@@ -16,17 +16,21 @@ module.exports = {
     try {
       const data = await getGuildData(interaction.guild.id);
       if (data.guildData.status === 'online') {
-        interaction.reply('Your server is already logged in!');
+        interaction.reply('Your server is already logged in!', {
+          ephemeral: true,
+        });
         return;
       }
       data.guildData.status = 'online';
       await data.save().catch((error) => {
         console.error(`Error on saving data - login command: ${error}`);
       });
-      interaction.reply('Your server has been logged in!');
+      interaction.reply('Your server has been logged in!', { ephemeral: true });
     } catch (error) {
       console.error(`Error on login command: ${error}`);
-      interaction.reply('An error occured while trying to log in.');
+      interaction.reply('An error occured while trying to log in.', {
+        ephemeral: true,
+      });
       return;
     }
   },
