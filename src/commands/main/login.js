@@ -14,15 +14,15 @@ module.exports = {
 
   callback: async (client, interaction) => {
     try {
-      const data = await getGuildData(interaction.guild.id);
-      if (data.guildData.status === 'online') {
+      const loginData = await getGuildData(interaction.guild.id);
+      if (loginData.guildData.status === 'online') {
         interaction.reply('Your server is already logged in!', {
           ephemeral: true,
         });
         return;
       }
-      data.guildData.status = 'online';
-      await data.save().catch((error) => {
+      loginData.guildData.status = 'online';
+      await loginData.save().catch((error) => {
         console.error(`Error on saving data - login command: ${error}`);
       });
       interaction.reply('Your server has been logged in!', { ephemeral: true });

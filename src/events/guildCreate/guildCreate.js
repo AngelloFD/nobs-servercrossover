@@ -12,10 +12,10 @@ const {
 module.exports = async (client, guild) => {
   if (!guild.available) return;
   try {
-    const data = await registerGuild(guild.id);
+    const getGuildData = await registerGuild(guild.id);
     if (guildIsActive(guild.id) === false) {
-      data.isActive = true;
-      await data.save().catch((error) => {
+      getGuildData.isActive = true;
+      await getGuildData.save().catch((error) => {
         `Error on saving data - guildCreate: ${error}`;
       });
     }

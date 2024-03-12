@@ -19,8 +19,8 @@ const Model = model('Guild', guildSchema);
 module.exports = {
   getGuildData: async (guildId) => {
     try {
-      const data = await Model.findOne({ guildId: guildId });
-      if (!data) {
+      const getGuildData = await Model.findOne({ guildId: guildId });
+      if (!getGuildData) {
         const newData = await Model.create({
           guildId: guildId,
           guildData: {
@@ -33,15 +33,15 @@ module.exports = {
         });
         return newData;
       }
-      return data;
+      return getGuildData;
     } catch (error) {
       `Error on getGuildData: ${error}`;
     }
   },
   guildIsActive: async (guildId) => {
     try {
-      const data = await Model.findOne({ guildId: guildId });
-      return data.isActive;
+      const getGuildData = await Model.findOne({ guildId: guildId });
+      return getGuildData.isActive;
     } catch (error) {
       console.error(`Error on guildIsActive: ${error}`);
     }

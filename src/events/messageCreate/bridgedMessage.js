@@ -4,7 +4,7 @@ const { getRoomData } = require('../../database/schemas/Room');
 
 module.exports = async (client, message) => {
   if (!message.guild || message.author.bot || !guildIsActive(message.guild.id))
-    return;
+    return console.log('Ignoring message');
 
   const bridgeChannelName = 'crossover-channel';
   // Check if the message is in the designated channel

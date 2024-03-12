@@ -14,15 +14,15 @@ module.exports = {
 
   callback: async (client, interaction, args) => {
     try {
-      const data = await getGuildData(interaction.guild.id);
-      if (data.guildData.status === 'offline') {
+      const logoutData = await getGuildData(interaction.guild.id);
+      if (logoutData.guildData.status === 'offline') {
         interaction.reply('Your server is already offline!', {
           ephemeral: true,
         });
         return;
       }
-      data.guildData.status = 'offline';
-      await data.save().catch((error) => {
+      logoutData.guildData.status = 'offline';
+      await logoutData.save().catch((error) => {
         console.error(`Error on saving data - logout command: ${error}`);
       });
       interaction.reply('Your server has gone offline!', { ephemeral: true });
