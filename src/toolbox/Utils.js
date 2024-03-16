@@ -1,5 +1,33 @@
 module.exports = class Utils {
   /**
+   * @param {import('discord.js').Channel} channel
+   * @description Fetches the channel webhook. If it doesn't exist, it creates one.
+   * @returns {Promise<import('discord.js').Webhook>}
+   */
+  static async fetchChannelWebhook(channel) {
+    var webhook = await channel
+      .fetchWebhooks()
+      .then((webhooks) => {
+        return webhooks.first();
+      })
+      .catch((error) => {
+        console.error(`Error on fetching webhooks: ${error}`);
+      });
+    if (webhook === undefined) {
+      var webhook = await channel
+        .createWebhook({
+          channel: channel.id,
+          name: 'Room Webhook',
+          reason: 'Room webhook creation',
+        })
+        .catch((error) => {
+          console.error(`Error on creating webhook command: ${error}`);
+        });
+    }
+    return webhook;
+  }
+
+  /**
    * Checks if a string contains a URL
    * @param {string} text
    */

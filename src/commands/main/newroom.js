@@ -1,5 +1,6 @@
 const { createRoomData } = require('../../database/schemas/Room');
 const { PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { fetchChannelWebhook } = require('../../toolbox/Utils');
 
 module.exports = {
   name: 'create-room',
@@ -15,7 +16,6 @@ module.exports = {
   ],
 
   callback: async (client, interaction) => {
-    // TODO: Test this command
     if (interaction.channel.name !== 'crossover-channel') {
       return interaction.reply(
         'This command can only be used in the crossover channel',
@@ -23,29 +23,15 @@ module.exports = {
       );
     }
     // Only create a webhook if there isn't one already
-    var webhook = await interaction.channel
-      .fetchWebhooks()
-      .then((webhooks) => {
-        return webhooks.first();
-      })
-      .catch((error) => {
-        console.error(`Error on fetching webhooks: ${error}`);
-      });
-    if (webhook === undefined) {
-      var webhook = await interaction.channel
-        .createWebhook({
-          channel: interaction.channel.id,
-          name: 'Room Webhook',
-          reason: 'Room webhook creation',
-        })
-        .catch((error) => {
-          console.error(`Error on creating webhook command: ${error}`);
-        });
-    }
-    console.log(webhook);
-    const resultData = await createRoomData(webhook.url, interaction.guild.id);
-    console.log(resultData);
+    var webhook = await fetchChannelWebhook(interaction.channel);
+    const resultData = await createRoomData(
+      webhook.url,
+      interaction.guild.id,
+      interaction.channel.id
+    );
     const settings = resultData.roomData;
+    settings.roomOwner = interaction.guild.name;
+
     const parsedSettings = Object.entries(settings).map(([key, value]) => {
       return `**${key}**: ${value}`;
     });
@@ -65,6 +51,7 @@ function processSettings(parsedSettings) {
   parsedSettings.forEach((setting, index) => {
     parsedSettings[index] = setting
       .replace('roomToken', 'Room Token')
+      .replace('roomOwner', 'Room Owner')
       .replace('roomMembers', 'Room Members');
   });
 }

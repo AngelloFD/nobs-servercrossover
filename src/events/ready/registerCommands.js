@@ -1,6 +1,6 @@
 const { REST, Routes } = require('discord.js');
 const {
-  TEST_SERVER1_ID,
+  TEST_SERVER_ID,
   DEV_MODE,
   BOT_TOKEN,
   BOT_ID,
@@ -30,7 +30,7 @@ module.exports = async (client) => {
       const localCommands = getLocalCommands();
       const applicationCommands = await getApplicationCommands(
         client,
-        TEST_SERVER1_ID
+        TEST_SERVER_ID
       );
 
       // Step 1: Delete commands that are not in localCommands

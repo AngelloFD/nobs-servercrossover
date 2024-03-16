@@ -6,18 +6,19 @@ const roomSchema = new Schema({
       type: String,
       required: true,
     },
-    roomMembers: [
-      {
-        type: String,
-        default: [],
+    roomOwner: {
+      type: String,
+      required: true,
+    },
+    roomMembers: {
+      type: Map,
+      of: {
+        member: String,
+        webhookURL: String,
+        channelId: String,
       },
-    ],
-    roomWebhooks: [
-      {
-        type: String,
-        default: [],
-      },
-    ],
+      default: {},
+    },
   },
 });
 
@@ -29,10 +30,10 @@ module.exports = {
    * @description Get the room data from the guildId. It catches the error and logs it to the console.
    * @returns {Promise<import('mongoose').Document>}
    */
-  getRoomData: async (guildId) => {
+  getRoomDataByGuildId: async (guildId) => {
     try {
       const getRoomData = await Model.findOne({
-        'roomData.roomMembers': guildId,
+        'roomData.roomOwner': guildId,
       });
       if (!getRoomData) {
         return null;
@@ -44,15 +45,34 @@ module.exports = {
   },
 
   /**
+   * @param {string} roomToken
+   * @description Get the room data from the roomToken. It catches the error and logs it to the console.
+   * @returns {Promise<import('mongoose').Document>}
+   */
+  getRoomDataByToken: async (roomToken) => {
+    try {
+      const getRoomData = await Model.findOne({
+        'roomData.roomToken': roomToken,
+      });
+      if (!getRoomData) {
+        return null;
+      }
+      return getRoomData;
+    } catch (error) {
+      console.error(`Error on getRoomData: ${error}`);
+    }
+  },
+  /**
    * @param {string} webhookURL
    * @param {string} guildId
+   * @param {string} channelId
    * @description Create the room data from the guildId. It catches the error and logs it to the console.
    * @returns {Promise<import('mongoose').Document>}
    */
-  createRoomData: async (webhookURL, guildId) => {
+  createRoomData: async (webhookURL, guildId, channelId) => {
     try {
       const getRoomData = await Model.findOne({
-        'roomData.roomMembers': guildId,
+        'roomData.roomOwner': guildId,
       });
       if (!getRoomData) {
         try {
@@ -61,8 +81,13 @@ module.exports = {
               roomToken:
                 Math.random().toString(36).substring(2, 15) +
                 Math.random().toString(36).substring(2, 15),
-              roomMembers: [guildId],
-              roomWebhooks: [webhookURL],
+              roomOwner: guildId,
+              roomMembers: {
+                [guildId]: {
+                  webhookURL: webhookURL,
+                  channelId: channelId,
+                },
+              },
             },
           });
           return newData;
@@ -78,12 +103,13 @@ module.exports = {
 
   /**
    * @param {string} roomToken
-   * @param {string} otherGuildId
-   * @param {string} otherGuildWebhookURL
+   * @param {string} guildId
+   * @param {string} guildWebhookUrl
+   * @param {string} channelId
    * @description Add a guild to the room. Returns whether the operation was a success or not. It catches the error and logs it to the console.
    * @returns {Promise<boolean>}
    */
-  addGuildToRoom: async (roomToken, otherGuildId, otherGuildWebhookURL) => {
+  addGuildToRoom: async (roomToken, guildId, guildWebhookUrl, channelId) => {
     let success = false;
     try {
       const getRoomData = await Model.findOne({ roomData: { roomToken } });
@@ -91,9 +117,11 @@ module.exports = {
         // Room hasnt been created yet
         success = false;
       }
-      getRoomData.roomData.roomMembers.push(otherGuildId);
-      getRoomData.roomData.roomWebhooks.push(otherGuildWebhookURL);
-      getRoomData.save();
+      getRoomData.roomData.roomMembers.set(guildId, {
+        webhookURL: guildWebhookUrl,
+        channelId: channelId,
+      });
+      await getRoomData.save();
       success = true;
     } catch (error) {
       success = false;

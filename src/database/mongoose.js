@@ -16,5 +16,6 @@ module.exports = {
   },
   schemas: {
     Guild: require('./schemas/Guild.js'),
+    Room: require('./schemas/Room.js'),
   },
 };
