@@ -102,6 +102,26 @@ module.exports = {
   },
 
   /**
+   * @param {string} guildId
+   * @description Delete the room data from the guildId. It catches the error and logs it to the console.
+   * @returns {Promise<boolean>}
+   */
+  deleteRoomData: async (guildId) => {
+    try {
+      const getRoomData = await Model.findOne({
+        'roomData.roomOwner': guildId,
+      });
+      if (!getRoomData) {
+        return false;
+      }
+      await getRoomData.deleteOne();
+      return true;
+    } catch (error) {
+      console.error(`Error on deleteRoomData: ${error}`);
+    }
+  },
+
+  /**
    * @param {string} roomToken
    * @param {string} guildId
    * @param {string} guildWebhookUrl
@@ -112,10 +132,11 @@ module.exports = {
   addGuildToRoom: async (roomToken, guildId, guildWebhookUrl, channelId) => {
     let success = false;
     try {
-      const getRoomData = await Model.findOne({ roomData: { roomToken } });
+      const getRoomData = await Model.findOne({
+        'roomData.roomToken': roomToken,
+      });
       if (!getRoomData) {
-        // Room hasnt been created yet
-        success = false;
+        return false;
       }
       getRoomData.roomData.roomMembers.set(guildId, {
         webhookURL: guildWebhookUrl,

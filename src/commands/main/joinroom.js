@@ -1,6 +1,4 @@
-const {
-  getRoomDataByToken
-} = require('../../database/schemas/Room');
+const { getRoomDataByToken, getRoomDataByGuildId } = require('../../database/schemas/Room');
 const {
   PermissionFlagsBits,
   ApplicationCommandOptionType,
@@ -38,23 +36,23 @@ module.exports = {
         { ephemeral: true }
       );
     }
-    const data = await getRoomDataByToken(roomToken);
 
-    const ownerMemberData = data.roomData.roomMembers.get(
-      data.roomData.roomOwner
+    const joiningRoomData = await getRoomDataByToken(roomToken);
+    const ownerMemberData = joiningRoomData.roomData.roomMembers.get(
+      joiningRoomData.roomData.roomOwner
     );
     const ownerWebhook = ownerMemberData.webhookURL;
     const ownerChannelId = ownerMemberData.channelId;
 
-    if (data.roomData.roomMembers.has(interaction.guild.id)) {
+    if (await getRoomDataByGuildId(interaction.guild.id)) {
       const confirmButton = new ButtonBuilder()
         .setCustomId('confirm_continue')
-        .setLabel('Confirm join')
+        .setLabel('Confirm delete')
         .setStyle(ButtonStyle.Success);
 
       const rejectButton = new ButtonBuilder()
         .setCustomId('reject_continue')
-        .setLabel('Reject join')
+        .setLabel('DON\'T DELETE!')
         .setStyle(ButtonStyle.Danger);
 
       const row = new ActionRowBuilder().addComponents(
@@ -62,15 +60,14 @@ module.exports = {
         rejectButton
       );
       interaction.reply(
-        'You are already in a room. Joining another room will delete the current one. Are you sure you want to continue?');
+        'You are already in a room. **To join another room, you will have to delete the current one with all its participants.** Are you sure you want to continue?'
+      );
       interaction.channel.send({ components: [row] });
       return;
-    } else if (data === null) {
+    } else if (joiningRoomData === null) {
       interaction.reply('Room not found', { ephemeral: true });
     }
 
-    // const guildId = interaction.guild.id;
-    // const channelWebhook = await fetchChannelWebhook(interaction.channel);
     if (!roomToken) {
       return interaction.reply(
         'You need to provide a room token to join a room',
@@ -99,6 +96,9 @@ module.exports = {
       components: [row],
       target: ownerChannelId,
     });
-    interaction.reply('Request sent to the room owner. Waiting for confirmation.', { ephemeral: true });
+    interaction.reply(
+      'Request sent to the room owner. Waiting for confirmation.',
+      { ephemeral: true }
+    );
   },
 };
