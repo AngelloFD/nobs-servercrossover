@@ -8,6 +8,7 @@ const {
 const areCommandsDifferent = require('../../toolbox/areCommandsDifferent');
 const getApplicationCommands = require('../../toolbox/getApplicationCommands');
 const getLocalCommands = require('../../toolbox/getLocalCommands');
+const logger = require('node-color-log');
 
 module.exports = async (client) => {
   if (!DEV_MODE) {
@@ -15,15 +16,15 @@ module.exports = async (client) => {
     const rest = new REST({ version: '9' }).setToken(BOT_TOKEN);
 
     try {
-      console.info(`Started refreshing ${localCommands.length} (/) commands.`);
+      logger.info(`Started refreshing ${localCommands.length} (/) commands.`);
       await rest.put(Routes.applicationCommands(BOT_ID), {
         body: localCommands,
       });
-      console.info(
+      logger.info(
         '✅ Successfully reloaded application (/) commands. IMPORTANT: This is a global command, it may take up to 1 hour to update in all servers.'
       );
     } catch (error) {
-      console.error(`Error on refreshing application (/) commands: ${error}`);
+      logger.error(`Error on refreshing application (/) commands: ${error}`);
     }
   } else {
     try {
@@ -38,7 +39,7 @@ module.exports = async (client) => {
       for (const applicationCommand of applicationCommands.cache.values()) {
         if (!localCommandNames.has(applicationCommand.name)) {
           await applicationCommands.delete(applicationCommand.id);
-          console.warn(`⚠️ Deleted command "${applicationCommand.name}".`);
+          logger.warn(`⚠️ Deleted command "${applicationCommand.name}".`);
         }
       }
 
@@ -53,7 +54,7 @@ module.exports = async (client) => {
         if (existingCommand) {
           if (localCommand.deleted) {
             await applicationCommands.delete(existingCommand.id);
-            console.warn(`⚠️ Deleted command "${name}".`);
+            logger.warn(`⚠️ Deleted command "${name}".`);
             continue;
           }
 
@@ -63,11 +64,11 @@ module.exports = async (client) => {
               options,
             });
 
-            console.info(`🔁 Edited command "${name}".`);
+            logger.info(`🔁 Edited command "${name}".`);
           }
         } else {
           if (localCommand.deleted) {
-            console.warn(
+            logger.warn(
               `⏩ Skipping registering command "${name}" as it's set to delete.`
             );
             continue;
@@ -79,12 +80,12 @@ module.exports = async (client) => {
             options,
           });
 
-          console.info(`👍 Registered command "${name}."`);
+          logger.info(`👍 Registered command "${name}."`);
         }
       }
-      console.info('✅ Registered all commands for dev guild.');
+      logger.info('✅ Registered all commands for dev guild.');
     } catch (error) {
-      console.error(`Error on registering commands: ${error}`);
+      logger.error(`Error on registering commands: ${error}`);
     }
   }
 };

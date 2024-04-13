@@ -1,5 +1,6 @@
 const { getGuildData } = require('../../database/schemas/Guild');
 const { PermissionFlagsBits } = require('discord.js');
+const logger = require('node-color-log');
 
 module.exports = {
   name: 'logout',
@@ -23,11 +24,11 @@ module.exports = {
       }
       logoutData.guildData.status = 'offline';
       await logoutData.save().catch((error) => {
-        console.error(`Error on saving data - logout command: ${error}`);
+        logger.error(`Error on saving data - logout command: ${error}`);
       });
       interaction.reply('Your server has gone offline!', { ephemeral: true });
     } catch (error) {
-      console.error(`Error on logout command: ${error}`);
+      logger.error(`Error on logout command: ${error}`);
       interaction.reply('An error occured while trying to log out.', {
         ephemeral: true,
       });

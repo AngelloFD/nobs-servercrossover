@@ -1,4 +1,5 @@
 const { getGuildData } = require('../../database/schemas/Guild');
+const logger = require('node-color-log');
 module.exports = async (client, guild) => {
   const guildId = guild.id;
   await getGuildData(guildId)

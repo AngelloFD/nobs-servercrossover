@@ -1,5 +1,6 @@
 const { PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 const { getGuildData } = require('../../database/schemas/Guild');
+const logger = require('node-color-log');
 
 module.exports = {
   name: 'config-overview',
@@ -29,7 +30,7 @@ module.exports = {
 
       await interaction.reply({ embeds: [embed], ephemeral: true });
     } catch (error) {
-      console.error(`Error on overview command: ${error}`);
+      logger.error(`Error on overview command: ${error}`);
       await interaction.reply({
         content: 'An error occurred while retrieving server settings.',
         ephemeral: true,

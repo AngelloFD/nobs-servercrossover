@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const logger = require('node-color-log');
 
 const roomSchema = new Schema({
   roomData: {
@@ -40,7 +41,7 @@ module.exports = {
       }
       return getRoomData;
     } catch (error) {
-      console.error(`Error on getRoomData: ${error}`);
+      logger.error(`Error on getRoomData: ${error}`);
     }
   },
 
@@ -59,7 +60,7 @@ module.exports = {
       }
       return getRoomData;
     } catch (error) {
-      console.error(`Error on getRoomData: ${error}`);
+      logger.error(`Error on getRoomData: ${error}`);
     }
   },
   /**
@@ -92,12 +93,12 @@ module.exports = {
           });
           return newData;
         } catch (error) {
-          console.error(`Error on createRoomData: ${error}`);
+          logger.error(`Error on createRoomData: ${error}`);
         }
       }
       return getRoomData;
     } catch (error) {
-      console.error(`Error on createRoomData: ${error}`);
+      logger.error(`Error on createRoomData: ${error}`);
     }
   },
 
@@ -114,10 +115,12 @@ module.exports = {
       if (!getRoomData) {
         return false;
       }
-      await getRoomData.deleteOne();
+      await getRoomData.deleteOne().catch((error) => {
+        logger.error(`Error while deleting data on deleteRoomData: ${error}`);
+      });
       return true;
     } catch (error) {
-      console.error(`Error on deleteRoomData: ${error}`);
+      logger.error(`Error on deleteRoomData: ${error}`);
     }
   },
 
@@ -126,28 +129,26 @@ module.exports = {
    * @param {string} guildId
    * @param {string} guildWebhookUrl
    * @param {string} channelId
-   * @description Add a guild to the room. Returns whether the operation was a success or not. It catches the error and logs it to the console.
+   * @description Add a guild to the room with the token specified. It catches the error and logs it to the console.
    * @returns {Promise<boolean>}
    */
   addGuildToRoom: async (roomToken, guildId, guildWebhookUrl, channelId) => {
-    let success = false;
     try {
-      const getRoomData = await Model.findOne({
-        'roomData.roomToken': roomToken,
-      });
-      if (!getRoomData) {
-        return false;
-      }
-      getRoomData.roomData.roomMembers.set(guildId, {
-        webhookURL: guildWebhookUrl,
-        channelId: channelId,
-      });
-      await getRoomData.save();
-      success = true;
+      const getRoomData = await Model.findOneAndUpdate(
+        {
+          'roomData.roomToken': roomToken,
+        },
+        {
+          $set: {
+            [`roomData.roomMembers.${guildId}`]: {
+              webhookURL: guildWebhookUrl,
+              channelId: channelId,
+            },
+          },
+        }
+      );
     } catch (error) {
-      success = false;
-      console.error(`Error on addGuildToRoom: ${error}`);
+      logger.error(`Error on addGuildToRoom: ${error}`);
     }
-    return success;
   },
 };

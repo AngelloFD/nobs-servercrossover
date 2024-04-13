@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const logger = require('node-color-log');
 
 const guildSchema = new Schema({
   guildId: {
@@ -7,7 +8,7 @@ const guildSchema = new Schema({
   },
   guildData: {
     status: String,
-    token: String,
+    token: String, //TODO: UTILIZAR!
     isActive: Boolean,
     joinedAt: Date,
     lastOnline: Date,
@@ -35,7 +36,7 @@ module.exports = {
       }
       return getGuildData;
     } catch (error) {
-      `Error on getGuildData: ${error}`;
+      logger.error(`Error on getGuildData: ${error}`);
     }
   },
   guildIsActive: async (guildId) => {
@@ -43,7 +44,7 @@ module.exports = {
       const getGuildData = await Model.findOne({ guildId: guildId });
       return getGuildData.isActive;
     } catch (error) {
-      console.error(`Error on guildIsActive: ${error}`);
+      logger.error(`Error on guildIsActive: ${error}`);
     }
   },
 };

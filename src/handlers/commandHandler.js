@@ -2,6 +2,7 @@ const { Collection } = require('discord.js');
 const { DEVS, TEST_SERVER1_ID, BOT_PREFIX } = require('../../config.json');
 const getLocalCommands = require('../toolbox/getLocalCommands');
 const { guildIsActive } = require('../database/schemas/Guild');
+const logger = require('node-color-log');
 
 const localCommandsCollection = new Collection();
 const localCommands = getLocalCommands();

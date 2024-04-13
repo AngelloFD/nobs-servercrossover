@@ -1,6 +1,6 @@
+const { get } = require('mongoose');
 const { createRoomData } = require('../../database/schemas/Room');
 const { PermissionFlagsBits, EmbedBuilder } = require('discord.js');
-const { fetchChannelWebhook } = require('../../toolbox/Utils');
 
 module.exports = {
   name: 'create-room',
@@ -23,7 +23,9 @@ module.exports = {
       );
     }
     // Only create a webhook if there isn't one already
-    var webhook = await fetchChannelWebhook(interaction.channel);
+    const guildData = await getGuildData(interaction.guild.id);
+    const webhook = guildData.guildData.token;
+
     const resultData = await createRoomData(
       webhook.url,
       interaction.guild.id,

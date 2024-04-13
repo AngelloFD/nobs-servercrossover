@@ -29,21 +29,20 @@ module.exports = {
   ],
 
   callback: async (client, interaction) => {
-    const roomToken = interaction.options.getString('token');
     if (interaction.channel.name !== 'crossover-channel') {
       return interaction.reply(
         'This command can only be used in the crossover channel',
         { ephemeral: true }
       );
     }
-
+    const roomToken = interaction.options.getString('token');
     const joiningRoomData = await getRoomDataByToken(roomToken);
     const ownerMemberData = joiningRoomData.roomData.roomMembers.get(
       joiningRoomData.roomData.roomOwner
     );
-    const ownerWebhook = ownerMemberData.webhookURL;
-    const ownerChannelId = ownerMemberData.channelId;
 
+    /*const ownerWebhook = ownerMemberData.webhookURL;
+    const ownerChannelId = ownerMemberData.channelId;
     if (await getRoomDataByGuildId(interaction.guild.id)) {
       const confirmButton = new ButtonBuilder()
         .setCustomId('confirm_continue')
@@ -76,7 +75,7 @@ module.exports = {
     }
 
     const confirmButton = new ButtonBuilder()
-      .setCustomId('confirm_join')
+      .setCustomId(`confirm_join:${roomToken}:${interaction.guild.id}:${fetchChannelWebhook(interaction.channel)}:${interaction.channel.id}`)
       .setLabel('Confirm join')
       .setStyle(ButtonStyle.Success);
 
@@ -99,6 +98,6 @@ module.exports = {
     interaction.reply(
       'Request sent to the room owner. Waiting for confirmation.',
       { ephemeral: true }
-    );
+    );*/
   },
 };

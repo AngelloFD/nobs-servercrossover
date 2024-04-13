@@ -1,5 +1,6 @@
 const { PermissionFlagsBits } = require('discord.js');
 const { getGuildData } = require('../../database/schemas/Guild');
+const logger = require('node-color-log');
 
 module.exports = {
   name: 'login',
@@ -23,11 +24,11 @@ module.exports = {
       }
       loginData.guildData.status = 'online';
       await loginData.save().catch((error) => {
-        console.error(`Error on saving data - login command: ${error}`);
+        logger.error(`Error on saving data - login command: ${error}`);
       });
       interaction.reply('Your server has been logged in!', { ephemeral: true });
     } catch (error) {
-      console.error(`Error on login command: ${error}`);
+      logger.error(`Error on login command: ${error}`);
       interaction.reply('An error occured while trying to log in.', {
         ephemeral: true,
       });

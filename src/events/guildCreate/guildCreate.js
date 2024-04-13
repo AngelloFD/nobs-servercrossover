@@ -3,6 +3,7 @@ const {
   getGuildData: registerGuild,
   guildIsActive,
 } = require('../../database/schemas/Guild');
+const logger = require('node-color-log');
 
 /**
  * @param {*} client
@@ -19,7 +20,7 @@ module.exports = async (client, guild) => {
         `Error on saving data - guildCreate: ${error}`;
       });
     }
-    console.info(`New guild joined: ${guild.name}`);
+    logger.info(`New guild joined: ${guild.name}`);
     const embed = new EmbedBuilder()
       .setTitle('Hello! 👋')
       .setDescription(
@@ -37,12 +38,12 @@ module.exports = async (client, guild) => {
         channel.send({ embeds: [embed] });
       } else {
         const owner = await guild.fetchOwner().catch((error) => {
-          console.error(`Error on fetchOwner: ${error}`);
+          logger.error(`Error on fetchOwner: ${error}`);
         });
         owner.send({ embeds: [embed] });
       }
     }
   } catch (error) {
-    console.error(`Error on guildCreate: ${error}`);
+    logger.error(`Error on guildCreate: ${error}`);
   }
 };
