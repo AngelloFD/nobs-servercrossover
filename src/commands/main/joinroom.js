@@ -1,4 +1,9 @@
-const { getRoomDataByToken, getRoomDataByGuildId } = require('../../database/schemas/Room');
+const logger = require('node-color-log');
+const {
+  getRoomDataByToken,
+  getRoomDataByGuildId,
+  addGuildToRoom,
+} = require('../../database/schemas/Room');
 const {
   PermissionFlagsBits,
   ApplicationCommandOptionType,
@@ -35,11 +40,37 @@ module.exports = {
         { ephemeral: true }
       );
     }
-    const roomToken = interaction.options.getString('token');
-    const joiningRoomData = await getRoomDataByToken(roomToken);
-    const ownerMemberData = joiningRoomData.roomData.roomMembers.get(
-      joiningRoomData.roomData.roomOwner
+
+    // Enviar mensaje de confirmación al chat del dueño de la sala
+    // con un botón de confirmar y otro de rechazar
+    // Al confirmar, se añade el servidor a la sala
+    // Al rechazar, se envía un mensaje de rechazo al servidor que intentó unirse
+    // Vas a necesitar: el webhook del dueño de la sala, el id del canal del dueño de la sala y el mensaje de confirmación
+
+    const confirmButton = new ButtonBuilder()
+      .setCustomId(
+        `confirm_join:${roomToken}:${interaction.guild.id}:${fetchChannelWebhook(interaction.channel)}:${interaction.channel.id}`
+      )
+      .setLabel('Confirm join')
+      .setStyle(ButtonStyle.Success);
+
+    const rejectButton = new ButtonBuilder()
+      .setCustomId('reject_join')
+      .setLabel('Reject join')
+      .setStyle(ButtonStyle.Danger);
+
+    const row = new ActionRowBuilder().addComponents(
+      confirmButton,
+      rejectButton
     );
+
+    // const webhookClient = new WebhookClient({ url:  });
+
+    // await addGuildToRoom(
+    //   interaction.guild.id,
+    //   interaction.options.getString('token'),
+    //   interaction.channel.id
+    // );
 
     /*const ownerWebhook = ownerMemberData.webhookURL;
     const ownerChannelId = ownerMemberData.channelId;

@@ -7,9 +7,19 @@ const roomSchema = new Schema({
       type: String,
       required: true,
     },
-    roomOwner: {
-      type: String,
-      required: true,
+    roomOwnerData: {
+      ownerId: {
+        type: String,
+        required: true,
+      },
+      ownerWebhookUrl: {
+        type: String,
+        required: true,
+      },
+      ownerChannelId: {
+        type: String,
+        required: true,
+      },
     },
     roomMembers: {
       type: Map,
@@ -23,18 +33,19 @@ const roomSchema = new Schema({
   },
 });
 
-const Model = model('Room', roomSchema);
+const RoomModel = model('Room', roomSchema);
 
 module.exports = {
+  RoomModel,
   /**
-   * @param {string} guildId
-   * @description Get the room data from the guildId. It catches the error and logs it to the console.
-   * @returns {Promise<import('mongoose').Document>}
+   * @param {string} guildId - The id of the guild you want to get the data from
+   * @description Get the room data from the guildId.
+   * @returns {Promise<import('mongoose').Document> | null}
    */
   getRoomDataByGuildId: async (guildId) => {
     try {
-      const getRoomData = await Model.findOne({
-        'roomData.roomOwner': guildId,
+      const getRoomData = await RoomModel.findOne({
+        'roomData.roomOwnerData.ownerId': guildId,
       });
       if (!getRoomData) {
         return null;
@@ -46,13 +57,13 @@ module.exports = {
   },
 
   /**
-   * @param {string} roomToken
-   * @description Get the room data from the roomToken. It catches the error and logs it to the console.
+   * @param {string} roomToken - The token of the room you want to get the data from
+   * @description Get the room data from the roomToken.
    * @returns {Promise<import('mongoose').Document>}
    */
   getRoomDataByToken: async (roomToken) => {
     try {
-      const getRoomData = await Model.findOne({
+      const getRoomData = await RoomModel.findOne({
         'roomData.roomToken': roomToken,
       });
       if (!getRoomData) {
@@ -64,25 +75,29 @@ module.exports = {
     }
   },
   /**
-   * @param {string} webhookURL
-   * @param {string} guildId
-   * @param {string} channelId
-   * @description Create the room data from the guildId. It catches the error and logs it to the console.
+   * @param {string} webhookURL - The webhook URL of the guild
+   * @param {string} guildId  - The id of the guild
+   * @param {string} channelId  - The id of the crossover channel in the guild
+   * @description Create the room data from the guildId.
    * @returns {Promise<import('mongoose').Document>}
    */
   createRoomData: async (webhookURL, guildId, channelId) => {
     try {
-      const getRoomData = await Model.findOne({
-        'roomData.roomOwner': guildId,
+      const getRoomData = await RoomModel.findOne({
+        'roomData.roomOwnerData.ownerId': guildId,
       });
       if (!getRoomData) {
         try {
-          const newData = await Model.create({
+          const newData = await RoomModel.create({
             roomData: {
               roomToken:
                 Math.random().toString(36).substring(2, 15) +
                 Math.random().toString(36).substring(2, 15),
-              roomOwner: guildId,
+              roomOwnerData: {
+                ownerId: guildId,
+                ownerWebhookUrl: webhookURL,
+                ownerChannelId: channelId,
+              },
               roomMembers: {
                 [guildId]: {
                   webhookURL: webhookURL,
@@ -103,14 +118,14 @@ module.exports = {
   },
 
   /**
-   * @param {string} guildId
-   * @description Delete the room data from the guildId. It catches the error and logs it to the console.
+   * @param {string} guildId  - The id of the guild
+   * @description Delete the room data from the guildId.
    * @returns {Promise<boolean>}
    */
   deleteRoomData: async (guildId) => {
     try {
-      const getRoomData = await Model.findOne({
-        'roomData.roomOwner': guildId,
+      const getRoomData = await RoomModel.findOne({
+        'roomData.roomOwnerData.ownerId': guildId,
       });
       if (!getRoomData) {
         return false;
@@ -125,16 +140,15 @@ module.exports = {
   },
 
   /**
-   * @param {string} roomToken
-   * @param {string} guildId
-   * @param {string} guildWebhookUrl
-   * @param {string} channelId
-   * @description Add a guild to the room with the token specified. It catches the error and logs it to the console.
-   * @returns {Promise<boolean>}
+   * @param {string} roomToken  - The token of the room
+   * @param {string} guildId  - The id of the guild
+   * @param {string} guildWebhookUrl  - The webhook URL of the guild
+   * @param {string} channelId  - The id of the crossover channel in the guild
+   * @description Add a guild to the room with the token specified.
    */
   addGuildToRoom: async (roomToken, guildId, guildWebhookUrl, channelId) => {
     try {
-      const getRoomData = await Model.findOneAndUpdate(
+      await RoomModel.findOneAndUpdate(
         {
           'roomData.roomToken': roomToken,
         },

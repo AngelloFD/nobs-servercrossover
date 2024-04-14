@@ -11,5 +11,5 @@ module.exports = async (client, guild) => {
       `Error on guildDelete event: ${error}`;
     });
 
-  console.log(`Left guild: ${guild.name} (id: ${guild.id})`);
+  logger.warn(`Left guild: ${guild.name} (id: ${guild.id})`);
 };

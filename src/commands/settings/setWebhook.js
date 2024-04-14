@@ -45,7 +45,9 @@ module.exports = {
     }
     try {
       if (!interaction.options.getString('webhook-url')) {
-        guildData.guildData.token = fetchChannelWebhook(interaction.channel.id);
+        guildData.guildData.token = (
+          await fetchChannelWebhook(interaction.channel)
+        ).id;
       } else {
         const webhookURL = interaction.options.getString('webhook-url');
         guildData.guildData.token = webhookURL;

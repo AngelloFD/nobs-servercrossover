@@ -1,0 +1,7 @@
+{
+  "files.exclude": {
+    "**/config.json": false,
+    "**/node_modules": true,
+    "**/package-lock.json": true,
+  }
+}

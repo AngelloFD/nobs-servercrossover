@@ -23,6 +23,7 @@ module.exports = {
         return;
       }
       logoutData.guildData.status = 'offline';
+      logoutData.guildData.lastOnline = Date.now();
       await logoutData.save().catch((error) => {
         logger.error(`Error on saving data - logout command: ${error}`);
       });

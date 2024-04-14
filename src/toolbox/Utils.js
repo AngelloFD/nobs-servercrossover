@@ -2,12 +2,12 @@ const logger = require('node-color-log');
 
 module.exports = class Utils {
   /**
-   * @param {import('discord.js').Channel} channel
-   * @description Fetches the channel webhook. If it doesn't exist, it creates one.
+   * @param {import('discord.js').TextChannel} textChannel
+   * @description Fetches the text channel webhook. If it doesn't exist, it creates one.
    * @returns {Promise<import('discord.js').Webhook>}
    */
-  static async fetchChannelWebhook(channel) {
-    var webhook = await channel
+  static async fetchChannelWebhook(textChannel) {
+    var webhook = await textChannel
       .fetchWebhooks()
       .then((webhooks) => {
         return webhooks.first();
@@ -16,9 +16,9 @@ module.exports = class Utils {
         logger.error(`Error on fetching webhooks: ${error}`);
       });
     if (webhook === undefined) {
-      var webhook = await channel
+      var webhook = await textChannel
         .createWebhook({
-          channel: channel.id,
+          textChannel: textChannel.id,
           name: 'Room Webhook',
           reason: 'Room webhook creation',
         })

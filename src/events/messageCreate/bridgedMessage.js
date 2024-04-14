@@ -10,6 +10,7 @@ module.exports = async (client, message) => {
   const bridgeChannelName = 'crossover-channel';
   // Check if the message is in the designated channel
   if (message.channel.name === bridgeChannelName) {
+    /*
     const data = await getRoomDataByGuildId(message.guild.id);
     if (!data) {
       message.channel.send('Room data not found');
@@ -64,5 +65,6 @@ module.exports = async (client, message) => {
     });
   } else {
     return;
+    */
   }
 };

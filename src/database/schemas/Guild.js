@@ -8,21 +8,26 @@ const guildSchema = new Schema({
   },
   guildData: {
     status: String,
-    token: String, //TODO: UTILIZAR!
+    token: String,
     isActive: Boolean,
     joinedAt: Date,
     lastOnline: Date,
   },
 });
 
-const Model = model('Guild', guildSchema);
+const GuildModel = model('Guild', guildSchema);
 
 module.exports = {
+  /**
+   * @param {String} guildId  - The guild ID to get the data from
+   * @description Get the guild data from the guildId.
+   * @returns {Promise<import('mongoose').Document> | null}
+   */
   getGuildData: async (guildId) => {
     try {
-      const getGuildData = await Model.findOne({ guildId: guildId });
+      const getGuildData = await GuildModel.findOne({ guildId: guildId });
       if (!getGuildData) {
-        const newData = await Model.create({
+        const newData = await GuildModel.create({
           guildId: guildId,
           guildData: {
             status: 'offline',
@@ -39,9 +44,15 @@ module.exports = {
       logger.error(`Error on getGuildData: ${error}`);
     }
   },
+
+  /**
+   * @param {String} guildId - The guild ID to check if it's active
+   * @description Function to retrieve the guild's active status
+   * @returns {Promise<Boolean>}
+   */
   guildIsActive: async (guildId) => {
     try {
-      const getGuildData = await Model.findOne({ guildId: guildId });
+      const getGuildData = await GuildModel.findOne({ guildId: guildId });
       return getGuildData.isActive;
     } catch (error) {
       logger.error(`Error on guildIsActive: ${error}`);

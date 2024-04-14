@@ -1,4 +1,5 @@
-const { get } = require('mongoose');
+const logger = require('node-color-log');
+const { getGuildData } = require('../../database/schemas/Guild');
 const { createRoomData } = require('../../database/schemas/Room');
 const { PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 
@@ -22,12 +23,11 @@ module.exports = {
         { ephemeral: true }
       );
     }
-    // Only create a webhook if there isn't one already
+
     const guildData = await getGuildData(interaction.guild.id);
     const webhook = guildData.guildData.token;
-
     const resultData = await createRoomData(
-      webhook.url,
+      webhook,
       interaction.guild.id,
       interaction.channel.id
     );

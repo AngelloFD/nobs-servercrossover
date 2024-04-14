@@ -84,7 +84,7 @@ module.exports = {
 
       await commandObject.callback(client, interaction);
     } catch (error) {
-      console.log(`There was an error running this command: ${error}`);
+      logger.error(`There was an error running this command: ${error}`);
     }
   },
 };
